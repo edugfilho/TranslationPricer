@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+        <script src="script.js"></script>
+    </head>
+    <body>
+        <script>
+            getUploadLink();
+        </script>
+        <form action="http://localhost:8080/upload" method="post" id="upload" enctype="multipart/form-data">
+            <input type="text" name="myText">
+            <input type="file" name="myFile">
+            <input type="submit" value="Submit">
+        </form>
+    </body>
+</html>

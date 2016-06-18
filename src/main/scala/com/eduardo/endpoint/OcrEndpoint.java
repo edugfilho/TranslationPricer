@@ -21,7 +21,7 @@ public class OcrEndpoint {
     @ApiMethod(name = "getLocations", path = "locations", httpMethod = "get")
     public BaseModel getLocationsNearby()
             throws InternalServerErrorException, BadRequestException, NotFoundException, OAuthRequestException {
-        return service.performOcr("Not implemented");
+        return null;
     }
 
 }
