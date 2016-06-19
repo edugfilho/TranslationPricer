@@ -10,7 +10,8 @@ function httpGetAsync(theUrl, callback)
 }
 
 function getUploadLink() {
-    httpGetAsync("https://translationpricer.appspot.com/upload?reason=getUrl", function(resp){
+    //httpGetAsync("https://translationpricer.appspot.com/upload?reason=getUrl", function(resp){
+	httpGetAsync("http://localhost:8080/upload?reason=getUrl", function(resp){
         document.getElementById('upload').action=resp;
 
     })

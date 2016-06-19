@@ -7,7 +7,6 @@ import com.eduardo.util.Resources
 import com.google.appengine.api.blobstore.{ BlobstoreService, BlobKey, BlobstoreServiceFactory }
 import com.google.common.base.CharMatcher
 import com.eduardo.service.OcrService
-import com.eduardo.servlet.UploadServlet
 import java.util.logging.Logger
 
 class UploadServlet extends HttpServlet {
@@ -21,14 +20,16 @@ class UploadServlet extends HttpServlet {
     if (reason != null && reason.equals("getUrl")) {
       val out = resp.getOutputStream
       out.print(blobstoreService.createUploadUrl("/upload"))
+      log.info("getUrl")
     } else {
+      log.info("OCR")
       val blobKey = new BlobKey(req.getParameter("blob-key"));
 
       val fileContent = blobstoreService.fetchData(blobKey, 0, BlobstoreService.MAX_BLOB_FETCH_SIZE - 1);
       try {
-        val result = OcrService.performOcr(List(fileContent));
-        log.info("Result:"+result);
-        val strResult = result.map { listAnnot => listAnnot.map { annot => annot.getDescription }.mkString(" ") }.mkString("\n\n========\n\n ")
+        val resultRaw = OcrService.performOcr(List(fileContent));
+        log.info("Result:"+resultRaw);
+        val strResult = resultRaw.map { listAnnot => listAnnot.map { annot => annot.getDescription }.mkString(" ") }.mkString("\n\n========\n\n ")
         if (strResult != null) {
           val result = CharMatcher.WHITESPACE.trimAndCollapseFrom(
             CharMatcher.JAVA_LETTER_OR_DIGIT.negate().replaceFrom(strResult, ' '),
