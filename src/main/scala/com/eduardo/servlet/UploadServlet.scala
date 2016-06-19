@@ -34,7 +34,7 @@ class UploadServlet extends HttpServlet {
           val result = CharMatcher.WHITESPACE.trimAndCollapseFrom(
             CharMatcher.JAVA_LETTER_OR_DIGIT.negate().replaceFrom(strResult, ' '),
             ' ')
-          resp.getOutputStream.print(f"$result =============/n\nNumber of characters: ${result.size}%d")
+          resp.getOutputStream.print(f"$result \n=============\n\nNumber of characters: ${result.size}%d")
         } else {
           resp.getOutputStream.print("Processing error")
         }

@@ -7,6 +7,7 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
 import com.google.api.services.vision.v1.VisionScopes
 import com.google.api.services.vision.v1.Vision
+import com.eduardo.util.Resources
 
 class VisionApiService 
 
@@ -16,10 +17,7 @@ object VisionApiService {
    * Connects to the Vision API using Application Default Credentials.
    */
   def get(): Vision = {
-    val nameResourceIs = getClass.getResourceAsStream("my.properties")
-    val p = new Properties()
-    p.load(nameResourceIs)
-    val appName: String = p getProperty "app.name"
+    val appName = Resources.getAppName()
     val credential =
       GoogleCredential.getApplicationDefault().createScoped(VisionScopes.all())
     val jsonFactory = JacksonFactory.getDefaultInstance()
