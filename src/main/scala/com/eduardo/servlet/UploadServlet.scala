@@ -2,37 +2,41 @@ package com.eduardo.servlet
 
 import java.io.FileOutputStream
 import javax.servlet.http.{ HttpServletResponse, HttpServletRequest, HttpServlet }
-
+import scala.collection.JavaConversions._
 import com.eduardo.util.Resources
 import com.google.appengine.api.blobstore.{ BlobstoreService, BlobKey, BlobstoreServiceFactory }
 import com.google.common.base.CharMatcher
 import com.eduardo.service.OcrService
 import java.util.logging.Logger
+import org.apache.commons.fileupload.servlet.ServletFileUpload
+import org.apache.commons.io.IOUtils
+import scala.collection.mutable.MutableList
 
 class UploadServlet extends HttpServlet {
 
   val blobstoreService = BlobstoreServiceFactory.getBlobstoreService
   val log = Logger.getLogger(getClass().getName());
-  
-  //TODO Deploy local to debug
-  override def doGet(req: HttpServletRequest, resp: HttpServletResponse): Unit = {
-    val reason = req.getParameter("reason")
-    if (reason != null && reason.equals("getUrl")) {
-      val out = resp.getOutputStream
-      out.print(blobstoreService.createUploadUrl("/upload"))
-      log.info("getUrl")
-    } else {
-      log.info("OCR")
-      val blobKey = new BlobKey(req.getParameter("blob-key"));
 
-      val fileContent = blobstoreService.fetchData(blobKey, 0, BlobstoreService.MAX_BLOB_FETCH_SIZE - 1);
-      try {
-        val resultRaw = OcrService.performOcr(List(fileContent));
-        log.info("Result:"+resultRaw);
-        val strResult = resultRaw.map { listAnnot => listAnnot.map { annot => annot.getDescription }.mkString(" ") }.mkString("\n\n========\n\n ")
+  override def doPost(req: HttpServletRequest, resp: HttpServletResponse): Unit = {
+    val upload = new ServletFileUpload()
+    val iterator = upload.getItemIterator(req)
+    val streamList = new MutableList[Array[Byte]]();
+    //TODO try to find a scala way to iterate over this. DO I need ServerFileUpload?
+    while (iterator.hasNext()) {
+      val item = iterator.next()
+      if(!item.isFormField()) { 
+    	  val stream  = item.openStream()
+        streamList.+=(IOUtils.toByteArray(stream))
+      }
+    }
+    try {
+        val resultRaw = OcrService.performOcr(streamList.toList);
+        //Getting the first element only (contains the whole text). Subsequent elements contain separated words (map over listAnnot if needed)
+        val strResult = resultRaw.map { listAnnot => listAnnot.head.getDescription }.mkString("\n\n========\n\n ")
+        log.info("Resul STR:"+strResult);
         if (strResult != null) {
           val result = CharMatcher.WHITESPACE.trimAndCollapseFrom(
-            CharMatcher.JAVA_LETTER_OR_DIGIT.negate().replaceFrom(strResult, ' '),
+            CharMatcher.ASCII.negate().replaceFrom(strResult, ' '),
             ' ')
           resp.getOutputStream.print(f"$result \n=============\n\nNumber of characters: ${result.size}%d")
         } else {
@@ -41,21 +45,6 @@ class UploadServlet extends HttpServlet {
       } catch {
         case e: Exception => e.printStackTrace();
       }
-
-    }
-  }
-
-  override def doPost(req: HttpServletRequest, resp: HttpServletResponse): Unit = {
-
-    val blobs = blobstoreService.getUploads(req)
-    //TODO Wrap in option
-    val blobKeys = blobs.get("myFile")
-
-    if (blobKeys == null || blobKeys.isEmpty()) {
-      resp.sendRedirect("/");
-    } else {
-      resp.sendRedirect("/upload?blob-key=" + blobKeys.get(0).getKeyString());
-    }
   }
 
 }

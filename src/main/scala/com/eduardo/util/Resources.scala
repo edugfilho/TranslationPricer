@@ -8,7 +8,6 @@ import java.util.Properties
   */
 object Resources {
 
-
   def getSecrets(): (String, String) = {
     val resource = getClass.getResourceAsStream("/ocrsecrets.properties")
     val reader = Source.fromInputStream(resource).getLines()

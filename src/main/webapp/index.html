@@ -6,13 +6,14 @@
         <script src="script.js"></script>
     </head>
     <body>
-        <script>
-            getUploadLink();
-        </script>
-        <form action="http://localhost:8080/upload" method="post" id="upload" enctype="multipart/form-data">
-            <input type="text" name="myText">
-            <input type="file" name="myFile">
-            <input type="submit" value="Submit">
+        <form method="post" id="upload" enctype="multipart/form-data">
+            <input class="file-upload-elem" type="text" name="myText">
+            <input class="file-upload-elem" type="file" name="myFile" id="doc-input">
+            <input type="button" id="submit-file" value="Submit">
         </form>
+        <div>
+        	<p id="result-text"></p>
+        	<p id="char-count"></p>
+        </div>
     </body>
 </html>
