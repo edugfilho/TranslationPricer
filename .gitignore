@@ -49,3 +49,9 @@ Temporary Items
 #Target
 target/*
 /target/
+
+.cache-main
+.classpath
+.project
+.settings/
+stackOverflow.sc
