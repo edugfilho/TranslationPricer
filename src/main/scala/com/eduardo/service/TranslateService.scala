@@ -30,7 +30,7 @@ object TranslateService {
     translate.getOrElse(buildTranslate)
   }
 
-  //Translate with auto detection in case no source provided
+  //TODO add multiple destination support
   def doTranslate(text: String, source: Option[String]): String = {
     try {
       val translationListResp = getTranslate().translations().list(List(text).asJava, "en")
