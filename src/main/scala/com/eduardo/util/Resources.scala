@@ -8,10 +8,10 @@ import java.util.Properties
   */
 object Resources {
 
-  def getSecrets(): (String, String) = {
-    val resource = getClass.getResourceAsStream("/ocrsecrets.properties")
+  def getSecrets(): String = {
+    val resource = getClass.getResourceAsStream("/api.secret")
     val reader = Source.fromInputStream(resource).getLines()
-    (reader.next, reader.next)
+    reader.next
   }
   
   def getAppName():String = {

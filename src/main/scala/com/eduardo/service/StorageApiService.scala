@@ -12,6 +12,7 @@ import com.google.api.services.storage.model.StorageObject
 import com.google.api.services.vision.v1.VisionScopes
 import com.google.api.client.http.InputStreamContent
 import java.io.InputStream
+import com.google.api.services.storage.StorageScopes
 
 
 class StorageService {
@@ -29,7 +30,7 @@ object StorageService {
     def buildStorage(): Storage = {
       val appName = Resources.getAppName()
       val credential =
-        GoogleCredential.getApplicationDefault().createScoped(VisionScopes.all())
+        GoogleCredential.getApplicationDefault().createScoped(StorageScopes.all())
       val jsonFactory = JacksonFactory.getDefaultInstance()
       val built = new Storage.Builder(GoogleNetHttpTransport.newTrustedTransport(), jsonFactory, credential)
         .setApplicationName(appName)

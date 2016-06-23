@@ -55,3 +55,4 @@ target/*
 .project
 .settings/
 stackOverflow.sc
+src/main/resources/api.secret
